@@ -33,57 +33,96 @@ and the following tactics may also be useful:
 
 variables (P Q R : Prop)
 
+example : ¬ P → (P → false) :=
+begin
+  intro nP,
+  intro hP,
+  apply nP,
+  exact hP,
+end
+
 example : ¬ true → false :=
 begin
-  sorry
+  intro hnt,
+  apply hnt,
+  trivial,
 end
 
 example : false → ¬ true :=
 begin
-  sorry
+  intro hf,
+  by_contra,
+  exact hf,
 end
 
 example : ¬ false → true :=
 begin
-  sorry
+  intro hnf,
+  trivial,
 end
 
 example : true → ¬ false :=
 begin
-  sorry
+  intro ht,
+  by_contra hf,
+  apply hf,
 end
 
 example : false → ¬ P :=
 begin
-  sorry
+  intro hf,
+  exfalso,
+  exact hf,
 end
 
 example : P → ¬ P → false :=
 begin
-  sorry
+  intro hP,
+  by_contra,
+  apply h,
+  apply hP,
 end
 
 example : P → ¬ (¬ P) :=
 begin
-  sorry
+  intro hP,
+  by_contra;
+  apply h,
+  exact hP,
 end
 
 example : (P → Q) → (¬ Q → ¬ P) :=
 begin
-  sorry
+  intro hPQ,
+  intro hnPQ,
+  by_contra hP,
+  apply hnPQ,
+  apply hPQ,
+  exact hP,
 end
 
 example : ¬ ¬ false → false :=
 begin
-  sorry
+  intro hnnf,
+  by_contra hnf,
+  apply hnnf,
+  exact hnf,
 end
 
 example : ¬ ¬ P → P :=
 begin
-  sorry
+  intro hnnP,
+  by_contra hnP,
+  apply hnnP,
+  exact hnP,
 end
 
 example : (¬ Q → ¬ P) → (P → Q) :=
 begin
-  sorry,
+  intro hnQnP,
+  intro hP,
+  by_contra hnQ,
+  apply hnQnP,
+  exact hnQ,
+  exact hP,
 end
