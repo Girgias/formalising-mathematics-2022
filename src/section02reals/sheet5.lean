@@ -13,11 +13,20 @@ theorem tendsto_neg {a : ℕ → ℝ} {t : ℝ} (ha : tendsto a t) :
   tendsto (λ n, - a n) (-t) :=
 begin
   rw tendsto_def,
-  intros ep eq,
-  use 1,
-  intro n,
-  intro N,
+  intros ε ε_pos,
+
+  rw tendsto_def at ha,
+  specialize ha ε ε_pos,
+  cases ha with B h,
+  use B,
+
+  intros n b_leq_n,
+  specialize h n b_leq_n,
+  have m : -(a n - t) = -a n - -t,
   norm_num,
+  rw ← m,
+  rw abs_neg,
+  exact h,
 end
 
 /-
@@ -37,6 +46,21 @@ theorem tendsto_add {a b : ℕ → ℝ} {t u : ℝ}
   (ha : tendsto a t) (hb : tendsto b u) :
   tendsto (λ n, a n + b n) (t + u) :=
 begin
+  rw tendsto_def,
+  intros ε ε_pos,
+
+  rw tendsto_def at ha,
+  specialize ha ε ε_pos,
+  cases ha with B h,
+  use B,
+
+  rw tendsto_def at hb,
+  specialize hb ε ε_pos,
+  cases hb with B h,
+
+  intros n b_leq_n,
+  -- triangle inequality not available
+  --norm_add_le
   sorry
 end
 

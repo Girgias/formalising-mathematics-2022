@@ -120,7 +120,7 @@ begin
 
   intros n b_leq_n,
   specialize h n b_leq_n,
-  ring,
+  norm_num,
   exact h,
   -- rw tendsto_def,
   -- norm_num,

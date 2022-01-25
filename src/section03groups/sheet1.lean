@@ -64,12 +64,16 @@ See if you can prove all seven using (for the most part) the `rw` tactic.
 
 @[simp] lemma inv_mul_cancel_left : a⁻¹ * (a * b) = b :=
 begin
-  sorry
+  rw ← mul_assoc,
+  rw inv_mul_self,
+  rw one_mul,
 end
 
 @[simp] lemma mul_inv_cancel_left : a * (a⁻¹ * b) = b :=
 begin
-  sorry
+  rw ← mul_assoc,
+  rw mul_inv_self,
+  rw one_mul,
 end
 
 lemma left_inv_eq_right_inv {a b c : G} (h1 : b * a = 1) (h2 : a * c = 1) : 
@@ -77,27 +81,53 @@ lemma left_inv_eq_right_inv {a b c : G} (h1 : b * a = 1) (h2 : a * c = 1) :
 begin
   -- hint for this one : establish the auxiliary fact
   -- that `b * (a * c) = (b * a) * c` with the `have` tactic.
-  sorry,
+  have h : b * (a * c) = (b * a) * c,
+  rw mul_assoc,
+  rw h2 at h,
+  rw h1 at h,
+  rw one_mul at h,
+  rw mul_one at h,
+  exact h,
 end
 
 lemma mul_eq_one_iff_eq_inv : a * b = 1 ↔ a⁻¹ = b :=
 begin
-  sorry,
+  split,
+  intro h,
+  have ha : a⁻¹ * (a * b) = b,
+  rw ← mul_assoc,
+  rw inv_mul_self, rw one_mul,
+  rw h at ha,
+  rw mul_one at ha,
+  exact ha,
+  intro hab,
+  rw ← hab,
+  rw mul_inv_self,
 end
 
 @[simp] lemma one_inv : (1 : G)⁻¹ = 1 :=
 begin
-  sorry,
+  -- has_inv,
+  rw ← mul_eq_one_iff_eq_inv,
+  rw one_mul,
 end
 
 @[simp] lemma inv_inv : (a⁻¹)⁻¹ = a :=
 begin
-  sorry,
+  rw ← mul_eq_one_iff_eq_inv,
+  rw inv_mul_self,
 end
 
 @[simp] lemma mul_inv_rev : (a * b)⁻¹ = b⁻¹ * a⁻¹ := 
 begin
-  sorry,
+  rw ← mul_eq_one_iff_eq_inv,
+  rw mul_assoc,
+  have h : b * (b⁻¹ * a⁻¹) = a⁻¹,
+  rw ← mul_assoc,
+  rw mul_inv_self,
+  rw one_mul,
+  rw h,
+  rw mul_inv_self,
 end
 
 /-
@@ -118,7 +148,9 @@ example (G : Type) [mygroup G] (a b : G) :
 example (G : Type) [mygroup G] (h : ∀ g : G, g * g = 1) :
   ∀ g h : G, g * h = h * g :=
 begin
-  sorry
+  intros hG gG,
+  specialize h gG,
+  rw mul_eq_one_iff_eq_inv at h,
 end
 
 end mygroup
