@@ -84,13 +84,25 @@ but it can't do anything with it if it's a variable.
 /-- The limit of the constant sequence with value 37 is 37. -/
 theorem tendsto_thirtyseven : tendsto (λ n, 37) 37 :=
 begin
-  sorry,
+  rw tendsto_def,
+  intros h1 h2,
+  use 1,
+  intro h3,
+  norm_num,
+  intro h4,
+  apply h2,
 end
 
 /-- The limit of the constant sequence with value `c` is `c`. -/
 theorem tendsto_const (c : ℝ) : tendsto (λ n, c) c :=
 begin
-  sorry,
+  rw tendsto_def,
+  intros h1 h2,
+  use 1,
+  intro h3,
+  intro h4,
+  norm_num,
+  apply h2,
 end
 
 /-- If `a(n)` tends to `t` then `a(n) + c` tends to `t + c` -/
@@ -98,13 +110,27 @@ theorem tendsto_add_const {a : ℕ → ℝ} {t : ℝ} (c : ℝ)
   (h : tendsto a t) :
   tendsto (λ n, a n + c) (t + c) :=
 begin
-  sorry,
+  rw tendsto_def,
+  intros ε ε_pos,
+
+  rw tendsto_def at h,
+  specialize h ε ε_pos,
+  cases h with B h,
+  use B,
+
+  intros n b_leq_n,
+  specialize h n b_leq_n,
+  ring,
+  exact h,
+  -- rw tendsto_def,
+  -- norm_num,
+  -- exact h,
   -- hints: make sure you know the maths proof!
   -- use `cases` to deconstruct an `exists`
   -- hypothesis, and `specialize` to specialize
   -- a `forall` hypothesis to specific values.
   -- Look up the explanations of these tactics in Part C
-  -- of the course notes. 
+  -- of the course notes.
 end
 
 
@@ -112,6 +138,8 @@ end
 example {a : ℕ → ℝ} {t : ℝ} (ha : tendsto a t) :
   tendsto (λ n, - a n) (-t) :=
 begin
+  rewrite tendsto_def,
+  intros ep small,
   sorry,
   -- Try this one. Where do you get stuck?
   -- The problem is that you probably don't
