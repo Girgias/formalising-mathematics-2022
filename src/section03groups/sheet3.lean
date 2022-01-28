@@ -134,7 +134,16 @@ we can make it a `simp` lemma.
 
 @[simp] theorem inv_mem_iff {x : G} : x⁻¹ ∈ H ↔ x ∈ H := 
 begin
-  sorry
+  split,{
+  have ha : x⁻¹ ∈ H → x⁻¹⁻¹ ∈ H,
+  exact H.inv_mem,
+  have hb : x⁻¹⁻¹ = x,
+  exact inv_inv x,
+  rewrite hb at ha,
+  exact ha,
+  }, {
+    exact H.inv_mem,
+  }
 end
 
 -- We could prove a bunch more theorems here. Let's just do two more.
@@ -142,13 +151,47 @@ end
 theorem mul_mem_cancel_left {x y : G} (hx : x ∈ H) :
   x * y ∈ H ↔ y ∈ H :=
 begin
-  sorry
+  split, {
+    intro hxy,
+    have hix : x⁻¹∈ H,
+    apply H.inv_mem, exact hx,
+    have hixx : x⁻¹ * x ∈ H,
+    apply mul_mem, exact hix, exact hx,
+    have hixxy : x⁻¹ * (x * y) ∈ H,
+    apply mul_mem, exact hix,
+    exact hxy,
+    have hixxyey : x⁻¹ * (x * y) = y,
+    exact inv_mul_cancel_left x y,
+    rw ← hixxyey,
+    exact hixxy,
+  }, {
+    intro hy,
+    apply H.mul_mem,
+    exact hx, exact hy,
+  }
 end
 
 theorem mul_mem_cancel_right {x y : G} (hx : x ∈ H) :
   y * x ∈ H ↔ y ∈ H :=
 begin
-  sorry
+  split, {
+    intro hyx,
+    have hix : x⁻¹∈ H,
+    apply H.inv_mem, exact hx,
+    have hxix : x * x⁻¹ ∈ H,
+    apply mul_mem, exact hx, exact hix,
+    have hyxix : y * x * x⁻¹ ∈ H,
+    apply mul_mem,
+    exact hyx, exact hix,
+    have hyxixey : y * x * x⁻¹ = y,
+    exact mul_inv_eq_of_eq_mul rfl,
+    rw ← hyxixey,
+    exact hyxix,
+  }, {
+    intro hy,
+    apply mul_mem,
+    exact hy, exact hx,
+  }
 end
 
 /-- The predicate saying that G is abelian. -/
