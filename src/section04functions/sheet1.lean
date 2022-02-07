@@ -86,36 +86,85 @@ begin
   -- you can start with `rw injective_def` if you like,
   -- and later you can `rw id_eval`, although remember that `rw` doesn't
   -- work under binders like `∀`, so use `intro` first.
-  sorry
+  rw injective_def,
+  intro a,
+  intro b,
+  rw id_eval,
+  rw id_eval,
+  intro haeb,
+  exact haeb,
 end
 
 example : surjective (id : X → X) :=
 begin
-  sorry
+  rw surjective_def,
+  intro y,
+  use y,
+  rw id_eval,
 end
 
 example (f : X → Y) (g : Y → Z) (hf : injective f) (hg : injective g) :
   injective (g ∘ f) :=
 begin
-  sorry
+  rw injective_def,
+  --rw injective_def at hf,
+  rw injective_def at hg,
+  intro a,
+  rw comp_eval,
+  intro b,
+  rw comp_eval,
+  specialize hg (f a) (f b),
+  intro hgfaegfb,
+  apply hf,
+  apply hg,
+  exact hgfaegfb,
 end
 
 example (f : X → Y) (g : Y → Z) (hf : surjective f) (hg : surjective g) :
   surjective (g ∘ f) :=
 begin
-  sorry
+  rw surjective_def,
+  rw surjective_def at hf,
+  rw surjective_def at hg,
+  intro z,
+  specialize hg z,
+  change ∃ (x : X), g(f x) = z,
+  cases hg with y hgy_e_z,
+  specialize hf y,
+  cases hf with x hfx_e_y,
+  use x,
+  rw hfx_e_y,
+  exact hgy_e_z,
 end
 
 -- This is a question on the IUM (Imperial introduction to proof course) function problem sheet
 example (f : X → Y) (g : Y → Z) : 
   injective (g ∘ f) → injective f :=
 begin
-  sorry
+  intro hgfi,
+  rw injective_def at hgfi,
+  rw injective_def,
+  intro a,
+  intro b,
+  specialize hgfi a b,
+  intro hfaefb,
+  apply hgfi,
+  rw comp_eval,
+  rw comp_eval,
+  rw hfaefb,
 end
 
 -- This is another one
 example (f : X → Y) (g : Y → Z) : 
   surjective (g ∘ f) → surjective g :=
 begin
-  sorry
+  intro hgfs,
+  rw surjective_def at hgfs,
+  rw surjective_def,
+  intro z,
+  specialize hgfs z,
+  cases hgfs with x hgfx_e_z,
+  rw comp_eval at hgfx_e_z,
+  use f x,
+  exact hgfx_e_z,
 end
