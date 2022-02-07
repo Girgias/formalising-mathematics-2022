@@ -75,10 +75,9 @@ begin
   intro h,
   specialize h X Y Z f g gf_injective,
   rw injective at h,
-  have bite : g(Y.b) = g(Y.c), refl,
-  rw bite at h,
-  -- cases h,
-  sorry,
+  have hg : g(Y.b) = g(Y.c), refl,
+  specialize h hg,
+  cases h,
 end
 
 -- This is another one
