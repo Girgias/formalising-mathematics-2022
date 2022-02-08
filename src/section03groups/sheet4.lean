@@ -55,12 +55,13 @@ variable (f : G →** H)
 -- is called. Uncomment it, look at the output, and remember it. It's
 -- a useful part of the group theory API.
 
--- example (a b : G) : a * b = b ↔ a = 1 := by library_search -- look at the output.
+example (a b : G) : a * b = b ↔ a = 1 := mul_left_eq_self
 
 -- Now see if you can do these.
 @[simp] lemma map_one : f 1 = 1 :=
 begin
-  sorry
+  rw  [← mul_left_eq_self, ← f.map_mul _ 1],
+  rw one_mul,
 end
 
 lemma map_inv (a : G) : f a⁻¹ = (f a)⁻¹ :=
@@ -73,7 +74,7 @@ variable (G)
 /-- `id G` is the identity group homomorphism from `G` to `G`. -/
 def id : G →** G :=
 { to_fun := λ a, a,
-  map_mul' := begin sorry end } -- fill in the proof that the identity function is a group hom!
+  map_mul' := begin intros ha hb, trivial, end } -- fill in the proof that the identity function is a group hom!
 
 variables {K : Type} [group K] {G}
 
