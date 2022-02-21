@@ -79,40 +79,101 @@ Let's prove some theorems.
 
 example : A ⊆ A :=
 begin
-  sorry,
+  rw subset_def,
+  intro x,
+  intro hx,
+  exact hx,
 end
 
 example : A ⊆ B → B ⊆ C → A ⊆ C :=
 begin
-  sorry,
+  intro hAB,
+  intro hBC,
+  rw subset_def,
+  intro x,
+  intro hxA,
+  apply hBC,
+  apply hAB,
+  exact hxA,
 end
 
 example : A ⊆ A ∪ B :=
 begin
-  sorry,
+  rw subset_def,
+  intro x,
+  intro hXA,
+  rw mem_union_iff,
+  left,
+  exact hXA,
 end
 
 example : A ∩ B ⊆ A :=
 begin
-  sorry,
+  rw subset_def,
+  intro x,
+  rw mem_inter_iff,
+  intro hxAiB,
+  cases hxAiB with hxA hxB,
+  exact hxA,
 end
 
 example : A ⊆ B → A ⊆ C → A ⊆ (B ∩ C) :=
 begin
-  sorry,
+  intro hAB,
+  intro hAC,
+  rw subset_def,
+  intro x,
+  intro hxA,
+  rw mem_inter_iff,
+  split,
+  apply hAB,
+  exact hxA,
+  apply hAC,
+  exact hxA,
 end
 
 example : B ⊆ A → C ⊆ A → B ∪ C ⊆ A :=
 begin
-  sorry,
+  intro hBA,
+  intro hCA,
+  rw subset_def,
+  intro x,
+  intro hBC,
+  cases hBC with hB hC,
+  apply hBA,
+  exact hB,
+  apply hCA,
+  exact hC,
 end
 
 example : A ⊆ B → C ⊆ D → A ∪ C ⊆ B ∪ D :=
 begin
-  sorry,
+  intro hAB,
+  intro hCD,
+  rw subset_def,
+  intro x,
+  intro hxAC,
+  cases hxAC with hA hC,
+  left,
+  apply hAB,
+  exact hA,
+  right,
+  apply hCD,
+  exact hC,
 end
 
 example : A ⊆ B → C ⊆ D → A ∩ C ⊆ B ∩ D :=
 begin
-  sorry,
+  intro hAB,
+  intro hCD,
+  rw subset_def,
+  intro x,
+  intro hxAC,
+  cases hxAC with hA hC,
+  rw mem_inter_iff,
+  split,
+  apply hAB,
+  exact hA,
+  apply hCD,
+  exact hC,
 end
