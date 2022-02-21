@@ -40,6 +40,7 @@ proof, try translating it into Lean. Note that a bunch
 of the results we proved in sheet 4 will be helpful. 
 -/
 
+/- TODO -/
 /-- If `a(n)` tends to `t` and `b(n)` tends to `u` then `a(n) + b(n)`
 tends to `t + u`. -/
 theorem tendsto_add {a b : ℕ → ℝ} {t u : ℝ}
