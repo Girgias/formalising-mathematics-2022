@@ -58,12 +58,11 @@ end
 
 example : A ⊆ univ :=
 begin
-  rw has_ssubset.subset,
-  sorry
+  exact subset_univ A,
 end
 
 example : ∅ ⊆ A :=
 begin
-  sorry
+  exact empty_subset A,
 end
 

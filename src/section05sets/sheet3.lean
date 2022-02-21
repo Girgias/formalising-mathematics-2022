@@ -32,37 +32,76 @@ variables
 
 example : x ∉ A → (x ∈ A → false) :=
 begin
-  sorry
+  intro h1,
+  intro h2,
+  apply h1,
+  exact h2,
 end
 
 example : x ∈ A → (x ∉ A → false) :=
 begin
-  sorry
+  intro h1,
+  intro h2,
+  apply h2,
+  exact h1,
 end
 
 example : (A ⊆ B) → x ∉ B → x ∉ A :=
 begin
-  sorry
+  intro hAB,
+  change x ∈ Bᶜ → x ∈ Aᶜ,
+  have hBcAc : Bᶜ ⊆ Aᶜ,
+  simp,
+  exact hAB,
+  intro hB,
+  apply hBcAc,
+  exact hB,
 end
 
 -- Lean couldn't work out what I meant when I wrote `x ∈ ∅` so I had
 -- to give it a hint by telling it the type of `∅`.
 example : x ∉ (∅ : set X):=
 begin
-  sorry
+  -- explains what ``simp`` does
+  squeeze_simp,
+  --simp,
 end
 
 example : x ∈ Aᶜ → x ∉ A :=
 begin
-  sorry
+  intro h,
+  exact h,
 end
 
 example : (∀ x, x ∈ A) ↔ ¬ (∃ x, x ∈ Aᶜ) :=
 begin
-  sorry
+  split,
+  {
+    intro hax,
+    intro he,
+    cases he with X x,
+    apply x,
+    apply hax,
+  },
+  {
+    intro he,
+    simp only [not_exists_not, mem_compl_eq] at he,
+    exact he,
+  },
 end
 
 example : (∃ x, x ∈ A) ↔ ¬ (∀ x, x ∈ Aᶜ) :=
 begin
-  sorry
+  split,
+  {
+    intro he,
+    rw not_forall,
+    simp only [mem_compl_eq, not_not_mem],
+    exact he,
+  }, {
+    intro ha,
+    rw not_forall at ha,
+    simp only [mem_compl_eq, not_not_mem] at ha,
+    exact ha,
+  }
 end
