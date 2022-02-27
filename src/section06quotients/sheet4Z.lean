@@ -40,12 +40,12 @@ def foo : ℕ × ℕ := (37, 53)
 
 example : foo.1 = 37 := 
 begin
-  refl
+  refl,
 end
 
 example : foo.2 = 53 := 
 begin
-  refl
+  refl,
 end
 
 -- warning : constructor on eliminators isn't refl
@@ -63,29 +63,55 @@ ab.1 + cd.2 = ab.2 + cd.1
 lemma R_def (ab cd : ℕ × ℕ) :
 R ab cd ↔ ab.1 + cd.2 = ab.2 + cd.1 := 
 begin
-  sorry
+  split, {
+    intro hr,
+    exact hr,
+  }, {
+    intro h,
+    exact h,
+  },
 end
 
 lemma R_def' (a b c d : ℕ) :
 R (a, b) (c, d) ↔ a + d = b + c :=
 begin
-  sorry
+  split, {
+    intro r,
+    rw R_def at r,
+    linarith,
+  }, {
+    intro h,
+    rw R_def,
+    linarith,
+  },
 end 
 
 
 lemma R_refl : reflexive R :=
 begin
-  sorry,
+  intro a,
+  rw R_def,
+  linarith,
 end
 
 lemma R_symm : symmetric R :=
 begin
-  sorry,
+  intros a b,
+  intro h,
+  rw R_def at h,
+  rw R_def,
+  --rw eq_comm,
+  linarith,
 end
 
 lemma R_trans : transitive R :=
 begin
-  sorry,
+  intros a b c,
+  rewrite R_def,
+  rewrite R_def,
+  rewrite R_def,
+  intros hab hbc,
+  linarith,
 end
 
 instance s : setoid (ℕ × ℕ) :=
@@ -95,7 +121,13 @@ instance s : setoid (ℕ × ℕ) :=
 @[simp] lemma equiv_def (a b c d : ℕ) :
   (a, b) ≈ (c, d) ↔ a + d = b + c :=
 begin
-  sorry
+  split, {
+    intro he,
+    apply he,
+  }, {
+    intro h,
+    apply h,
+  },
 end
 
 notation `myint` := quotient s
@@ -109,12 +141,19 @@ instance : has_zero myint :=
 
 @[simp] lemma zero_def : (0 : myint) = ⟦(0, 0)⟧ :=
 begin
-  sorry
+  refl,
 end
 
-def neg : myint → myint :=
-quotient.map (λ ab, (ab.2, ab.1)) begin
-  sorry,
+def neg : myint → myint := quotient.map (λ ab, (ab.2, ab.1))
+begin
+  intros a b,
+  cases a with a1 a2,
+  cases b with b1 b2,
+  intro he,
+  rw equiv_def at he,
+  dsimp,
+  rw equiv_def,
+  linarith,
 end
 
 instance : has_neg myint :=
@@ -123,12 +162,22 @@ instance : has_neg myint :=
 @[simp] lemma neg_def (a b : ℕ) : 
   -⟦(a, b)⟧ = ⟦(b, a)⟧ :=
 begin
-  sorry,
+  refl,
 end
 
 def add : myint → myint → myint :=
-quotient.map₂ (λ ab cd, (ab.1 + cd.1, ab.2 + cd.2)) begin
-  sorry,
+  quotient.map₂ (λ ab cd, (ab.1 + cd.1, ab.2 + cd.2))
+begin
+  intros x y he w z hf,
+  dsimp,
+  cases x with a b,
+  cases y with c d,
+  cases z with f g,
+  cases w with h i,
+  rw equiv_def,
+  rw equiv_def at he,
+  rw equiv_def at hf,
+  linarith,
 end
 
 instance : has_add myint :=
@@ -137,27 +186,52 @@ instance : has_add myint :=
 @[simp] lemma add_def (a b c d : ℕ) :
   ⟦(a, b)⟧ + ⟦(c, d)⟧ = ⟦(a + c, b + d)⟧ :=
 begin
-  sorry
+  refl,
 end
 
 instance add_comm_group : add_comm_group myint :=
 { add := (+),
   add_assoc := begin
-    sorry,
+    intros a b c,
+    apply quotient.induction_on₃ a b c,
+    clear a b c,
+    intros a b c,
+    cases a with a1 a2,
+    cases b with b1 b2,
+    cases c with c1 c2,
+    simp,
+    linarith,
   end,
   zero := 0,
   zero_add := begin
-    sorry,
+    intro a,
+    apply quotient.induction_on a,
+    clear a, intro a,
+    cases a with a1 a2,
+    simp, linarith,
   end,
   add_zero := begin
-    sorry,
+    intro a,
+    apply quotient.induction_on a,
+    clear a, intro a,
+    cases a with a1 a2,
+    simp, linarith,
   end,
   neg := has_neg.neg,
   add_left_neg := begin
-    sorry,
+    intro a,
+    apply quotient.induction_on a,
+    clear a, intro a,
+    cases a with a1 a2,
+    simp, linarith,
   end,
   add_comm := begin
-    sorry,
+    intros a b,
+    apply quotient.induction_on₂ a b,
+    clear a b, intros a b,
+    cases a with a1 a2,
+    cases b with b1 b2,
+    simp, linarith,
   end }
 
 -- our model is that the equivalence class ⟦(a, b)⟧
@@ -167,13 +241,23 @@ instance : has_one myint :=
 
 @[simp] lemma one_def : (1 : myint) = ⟦(1, 0)⟧ :=
 begin
-  sorry,
+  refl,
 end
 
 -- (a-b)*(c-d)=(ac+bd)-(ad+bc)
 def mul : myint → myint → myint :=
-quotient.map₂ (λ ab cd, (ab.1 * cd.1 + ab.2 * cd.2, ab.1 * cd.2 + ab.2 * cd.1)) begin
-  sorry,
+quotient.map₂ (λ ab cd, (ab.1 * cd.1 + ab.2 * cd.2, ab.1 * cd.2 + ab.2 * cd.1))
+begin
+  intros a b hab c d hcd,
+  dsimp,
+  cases a with a1 a2,
+  cases b with b1 b2,
+  cases c with c1 c2,
+  cases d with d1 d2,
+  rw equiv_def at hab,
+  rw equiv_def at hcd,
+  simp,
+  nlinarith,
 end
 
 instance : has_mul myint :=
@@ -182,7 +266,7 @@ instance : has_mul myint :=
 @[simp] lemma mul_def (a b c d : ℕ) :
   ⟦(a, b)⟧ * ⟦(c, d)⟧ = ⟦(a * c + b * d, a * d + b * c)⟧ :=
 begin
-  sorry,
+  refl,
 end
 
 instance : comm_ring myint :=
@@ -190,23 +274,61 @@ instance : comm_ring myint :=
   zero := 0,
   mul := (*),
   mul_assoc := begin
-    sorry,
+    intros a b c,
+    apply quotient.induction_on₃ a b c,
+    clear a b c,
+    intros a b c,
+    cases a with a1 a2,
+    cases b with b1 b2,
+    cases c with c1 c2,
+    simp,
+    nlinarith,
   end,
   one := 1,
   one_mul := begin
-    sorry,
+    intro a,
+    apply quotient.induction_on a, clear a, intro a,
+    cases a with a1 a2,
+    simp,
+    linarith,
   end,
   mul_one := begin
-    sorry,
+    intro a,
+    apply quotient.induction_on a, clear a, intro a,
+    cases a with a1 a2,
+    simp,
+    linarith,
   end,
   left_distrib := begin
-    sorry,
+    intros a b c,
+    apply quotient.induction_on₃ a b c,
+    clear a b c,
+    intros a b c,
+    cases a with a1 a2,
+    cases b with b1 b2,
+    cases c with c1 c2,
+    simp,
+    nlinarith,
   end,
   right_distrib := begin
-    sorry,
+    intros a b c,
+    apply quotient.induction_on₃ a b c,
+    clear a b c,
+    intros a b c,
+    cases a with a1 a2,
+    cases b with b1 b2,
+    cases c with c1 c2,
+    simp,
+    nlinarith,
   end,
   mul_comm := begin
-    sorry,
+    intros a b,
+    apply quotient.induction_on₂ a b,
+    clear a b, intros a b,
+    cases a with a1 a2,
+    cases b with b1 b2,
+    simp,
+    nlinarith,
   end,
   ..myint.add_comm_group }
 

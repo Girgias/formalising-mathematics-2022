@@ -37,32 +37,32 @@ attribute [instance] s
 
 -- Uncomment the three lines below to see it in action
 
---def n : ℤ := 23 -- a random integer
+def n : ℤ := 23 -- a random integer
 
---#check ⟦n⟧ -- it's in Zmod37
+#check ⟦n⟧ -- it's in Zmod37
 
---#check n ≈ 42 -- it's a true-false statement
+#check n ≈ 42 -- it's a true-false statement
 
 -- in fact `⟦a⟧` is just notation for `quotient.mk a`, the
 -- function from `X` to `quotient s`. Let's check this.
 
 example (a : ℤ) : ⟦a⟧ = quotient.mk a :=
 begin
-  refl
+  refl,
 end
 
 -- and `≈` is just notation for `R`
 -- (this is handy to know; let's give it a name so we can rewrite it)
 lemma equiv_def (a b : ℤ) : a ≈ b ↔ R a b :=
 begin
-  refl
+  refl,
 end
 
 -- The theorem that quotient.mk is surjective is called `surjective_quotient_mk`.
 
 example : function.surjective (λ (a : ℤ), ⟦a⟧) :=
 begin
-  exact surjective_quotient_mk ℤ 
+  exact surjective_quotient_mk ℤ,
   -- `surjective_quotient_mk` is a theorem in the library
   -- maybe you could have guessed its name?
 end
@@ -72,19 +72,19 @@ end
 
 example (a b : ℤ) : ⟦a⟧ = ⟦b⟧ ↔ a ≈ b :=
 begin
-  exact quotient.eq -- so `rw quotient.eq` is often useful
+  exact quotient.eq, -- so `rw quotient.eq` is often useful
 end
 
 -- Both implications also have names
 
 example (a b : ℤ) : ⟦a⟧ = ⟦b⟧ → a ≈ b :=
 begin
-  exact quotient.exact
+  exact quotient.exact,
 end
 
 example (a b : ℤ) : a ≈ b → ⟦a⟧ = ⟦b⟧ :=
 begin
-  exact quotient.sound
+  exact quotient.sound,
 end 
 
 /-
@@ -119,7 +119,18 @@ namespace Zmod
 
 lemma negation_is_well_defined_key_lemma (a b : ℤ) (h : a ≈ b) : ⟦-a⟧ = ⟦-b⟧ :=
 begin
-  sorry,
+  rw quotient.eq,
+  rw equiv_def,
+  rw R_def,
+  rw equiv_def at h,
+  rw R_def at h,
+  cases h with z hz,
+  use -z,
+  simp,
+  apply eq_neg_of_eq_neg,
+  simp,
+  rw eq_comm,
+  exact hz,
 end
 
 -- The lemma above is somehow the key ingredient to make those
@@ -165,19 +176,28 @@ the diagram commute (i.e. such that `⟦F(x₁)⟧ = f(⟦x₁⟧)`).
 def neg2 : Zmod37 → Zmod37 := quotient.map (λ a, -a) begin
   -- goal looks terrifying! I don't really understand it myself!
   -- But bravely start with `intro a`, and use `dsimp` to get rid of the `lambda`s
-  sorry
+  intro a,
+  dsimp,
+  intro b,
+  intro h,
+  cases h with z hz,
+  use -z,
+  simp,
+  apply eq_neg_of_eq_neg,simp,
+  rw eq_comm,
+  exact hz,
 end
 
 -- The diagram commutes by definition
 example (a : ℤ) : neg2 ⟦a⟧ = ⟦-a⟧ :=
 begin
-  refl
+  refl,
 end 
 
 -- The two ways of defining negation are definitionally equal as well
 example : neg = neg2 :=
 begin
-  refl
+  refl,
 end 
 
 -- We have negation; in the next sheet we'll define addition
